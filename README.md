@@ -1,4 +1,4 @@
-#  File Explorer Pro  #
+#  File Explorer Pro  
 
 #  Description:
  File Explorer Pro is an advanced file management application designed to provide users with powerful tools for navigating, organizing, and manipulating files and directories on their system. It offers a comprehensive set of features and a user-friendly interface to enhance the file browsing experience.
@@ -19,8 +19,6 @@
 
     Integration with Git: The application offers integration with Git repositories, allowing users to clone repositories directly from within the file explorer.
 
-    Error Handling: File Explorer Pro includes robust error handling mechanisms to gracefully handle unexpected errors and exceptions, ensuring a smooth user experience.
-
 #  Target Audience:
  File Explorer Pro is designed for users who require advanced file management capabilities beyond what traditional file explorers offer. It caters to professionals, developers, power users, and anyone who deals with a large volume of files and directories on a regular basis.
 
@@ -28,7 +26,7 @@
  The application is developed for Windows operating systems and leverages .NET Framework 8.0 for its implementation.
 
 #  Future Development:
- Future updates to File Explorer Pro may include additional features such as cloud storage integration, enhanced security options, performance improvements, and support for additional file formats.
+ Future updates to File Explorer Pro may include additional features such as enhanced security options, bug fixes, performance improvements, and support for additional file formats.
 
 #  Note: 
  This description provides an overview of File Explorer Pro's functionality and target audience. Actual features and specifications may vary based on the application's development status and roadmap.
