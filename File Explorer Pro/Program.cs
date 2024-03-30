@@ -35,13 +35,17 @@ public enum ColorTheme
 
 class FileExplorerPro
 {
-    private const string AppVersion = "4.0";
-    private const string LastUpdateDate = "24.03.2024";
+    //TODO: "Undo" and "Redo" commands logic needs to be rewritten.
+    //TODO: "Switch Language" command logic needs to be rewritten.
+    private const string AppVersion = "4.1";
+    private const string LastUpdateDate = "30.03.2024";
     static CultureInfo currentCulture = CultureInfo.CurrentCulture;
     static bool isFilterEnabled = false;
     static Stack<string> directoryStack = new Stack<string>();
     static List<string> lastOperationFiles = new List<string>();
     static ColorTheme currentTheme = ColorTheme.Default;
+    static Stack<Action> undoStack = new Stack<Action>();
+    static Stack<Action> redoStack = new Stack<Action>();
 
 
 
@@ -166,20 +170,16 @@ class FileExplorerPro
                 Colorize("9.", ConsoleColor.Cyan, "  Copy/Move files", ConsoleColor.Green);
                 Colorize("10.", ConsoleColor.Cyan, " Rename files/directories", ConsoleColor.Green);
                 Colorize("11.", ConsoleColor.Cyan, " File details", ConsoleColor.Green);
-                Colorize("12.", ConsoleColor.Cyan, " Switch Language", ConsoleColor.Green);
-                Colorize("13.", ConsoleColor.Cyan, " Preview file content", ConsoleColor.Green);
-                Colorize("14.", ConsoleColor.Cyan, " Toggle Filter On/Off", ConsoleColor.Green);
-                Colorize("15.", ConsoleColor.Cyan, " Zip files", ConsoleColor.Green);
-                Colorize("16.", ConsoleColor.Cyan, " Unzip file", ConsoleColor.Green);
-                Colorize("17.", ConsoleColor.Cyan, " Associate file type with program", ConsoleColor.Green);
-                Colorize("18.", ConsoleColor.Cyan, " Select multiple files/folders", ConsoleColor.Green);
-                Colorize("19.", ConsoleColor.Cyan, " Undo last operation", ConsoleColor.Green);
-                Colorize("20.", ConsoleColor.Cyan, " Redo last undone operation", ConsoleColor.Green);
-                Colorize("21.", ConsoleColor.Cyan, " Show detailed help", ConsoleColor.Green);
-                Colorize("22.", ConsoleColor.Cyan, " Encrypt/Decrypt files", ConsoleColor.Green);
-                Colorize("23.", ConsoleColor.Cyan, " Go back to the parent directory", ConsoleColor.Green);
-                Colorize("24.", ConsoleColor.Cyan, " Change Color Theme", ConsoleColor.Green);
-                Colorize("25.", ConsoleColor.Cyan, " Clone From Git Repository", ConsoleColor.Green);
+                Colorize("12.", ConsoleColor.Cyan, " Preview file content", ConsoleColor.Green);
+                Colorize("13.", ConsoleColor.Cyan, " Toggle Filter On/Off", ConsoleColor.Green);
+                Colorize("14.", ConsoleColor.Cyan, " Zip files", ConsoleColor.Green);
+                Colorize("15.", ConsoleColor.Cyan, " Unzip file", ConsoleColor.Green);
+                Colorize("16.", ConsoleColor.Cyan, " Associate file type with program", ConsoleColor.Green);
+                Colorize("17.", ConsoleColor.Cyan, " Select multiple files/folders", ConsoleColor.Green);
+                Colorize("18.", ConsoleColor.Cyan, " Show detailed help", ConsoleColor.Green);
+                Colorize("19.", ConsoleColor.Cyan, " Encrypt/Decrypt files", ConsoleColor.Green);
+                Colorize("20.", ConsoleColor.Cyan, " Go back to the parent directory", ConsoleColor.Green);
+                Colorize("21.", ConsoleColor.Cyan, " Clone From Git Repository", ConsoleColor.Green);
                 Colorize("  Exit", ConsoleColor.Red, "", ConsoleColor.White);
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Write("    Enter your choice: ");
@@ -215,13 +215,15 @@ class FileExplorerPro
                     case "--taskmanager":
                         TaskManager();
                         break;
-                    case "--r":
+                    /* 
+                     * TODO: I have no idea how to make this work. Please help
+                     * case "--r":
                     case "--restart":
                         Console.WriteLine(" Restarting program... ");
                         Thread.Sleep(2000);
                         Process.Start(Environment.GetCommandLineArgs()[0]);
                         Environment.Exit(0);
-                        break;
+                        break; */
                     case "--zenqterminalascii":
                         DisplayAsciiArt();
                         break;
@@ -269,59 +271,67 @@ class FileExplorerPro
                     case "-filedetails":
                         DisplayFileDetails(currentDirectory);
                         break;
-                    case "12":
+                    /*
+                     * Fix this thing please
+                     * case "12":
                     case "-switchlang":
                         SetLanguage();
                         break;
-                    case "13":
+                    */
+                    case "12":
                     case "-preview":
                         PreviewFileContent(currentDirectory);
                         break;
-                    case "14":
+                    case "13":
                     case "-togglefilter":
                         ToggleFilter();
                         break;
-                    case "15":
+                    case "14":
                     case "-zip":
                         ZipFiles(currentDirectory);
                         break;
-                    case "16":
+                    case "15":
                     case "-unzip":
                         UnzipFile(currentDirectory);
                         break;
-                    case "17":
+                    case "16":
                     case "-associate":
                         AssociateFileTypeWithProgram();
                         break;
-                    case "18":
+                    case "17":
                     case "-select":
                         SelectMultipleFilesOrFolders();
                         break;
-                    case "19":
+                    /* 
+                     * case "19":
                     case "-undo":
                         Undo();
                         break;
                     case "20":
                     case "-redo":
                         Redo();
-                        break;
-                    case "21":
+                        break; 
+                    */
+                    case "18":
                     case "-detailedhelp":
                         ShowDetailedHelp();
                         break;
-                    case "22":
+                    case "19":
                     case "-encryptdecrypt":
                         EncryptDecryptFiles(currentDirectory);
                         break;
-                    case "23":
+                    case "20":
                     case "-goback":
                         GoBackToParentDirectory(ref currentDirectory);
                         break;
-                    case "24":
+                    /* 
+                     * Please fix this too
+                     * case "24":
                     case "-changetheme":
                         ChangeColorTheme();
                         break;
-                    case "25":
+                    */
+                    case "21":
                     case "-gitclone":
                         GitClone(currentDirectory);
                         break;
@@ -640,27 +650,33 @@ class FileExplorerPro
         Console.WriteLine("\n     File Explorer Pro - License\n");
         Console.ResetColor();
         string licenseText = @"
+
             MIT License
 
-            Copyright (c) 07.03.2024 ZenQuant (Alex Gardaphadze)
+        Copyright (c) 07.03.2024 Alex Gardaphadze
 
-            Permission is hereby granted, free of charge, to any person obtaining a copy
-            of this software and associated documentation files (the ""Software""), to deal
-            in the Software without restriction, including without limitation the rights
-            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is
-            furnished to do so, subject to the following conditions:
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the ""Software""), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
 
-            The above copyright notice and this permission notice shall be included in all
-            copies or substantial portions of the Software.
+        1. Any modification to the software's script must be notified to the creator, Alex Gardaphadze, and should include a clear indication of the changes made.
 
-            THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            SOFTWARE.
+        2. The user who modifies the software's script is responsible for ensuring that the modified version remains functional and does not introduce non-functional behavior.
+
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+
             ";
         Console.WriteLine(licenseText);
         Console.ReadLine();
@@ -711,14 +727,21 @@ class FileExplorerPro
         // Add more update information as needed.
         Colorize("\n   Update Information:  \n", ConsoleColor.DarkRed, "", ConsoleColor.Magenta);
 
-        Colorize("\n   --- Version 4.0 - 24.03.2024 ---  \n", ConsoleColor.DarkYellow, "", ConsoleColor.DarkYellow);
+        Colorize("\n   --- Version 4.1 ---  ", ConsoleColor.DarkYellow, "30.03.2024 \n", ConsoleColor.DarkYellow);
+        Console.WriteLine(" - Command 'Undo' is no longer be available. This command logic will be rewritten in future. ");
+        Console.WriteLine(" - Command 'Redo' is no longer be available. This command logic will be rewritten in future. ");
+        Console.WriteLine(" - Command 'Switch Language' is no longer be available. This command logic will be rewritten in future. ");
+        Console.WriteLine(" - Some parts for script were changed. (Nothing changed) ");
+        Console.WriteLine(" - License file was changed from 'README.md' to 'LICENSE.md' file. ");
+
+        Colorize("\n   --- Version 4.0 ---  ", ConsoleColor.DarkYellow, "24.03.2024 \n", ConsoleColor.DarkYellow);
         Console.WriteLine(" - Added support for the '--taskmanager' command. ");
         Console.WriteLine(" - Updated information in '--features' command. ");
         Console.WriteLine(" - Package 'System.IO.Abstractions' was installed. ");
         Console.WriteLine(" - Added new '-gitclone' command. ");
         Console.WriteLine(" - Some non-critical warnings were fixed. ");
 
-        Colorize("\n   --- Version 3.0 - 11.03.2024 ---  \n", ConsoleColor.DarkYellow, "", ConsoleColor.DarkYellow);
+        Colorize("\n   --- Version 3.0 ---  ", ConsoleColor.DarkYellow, "11.03.2024 \n", ConsoleColor.DarkYellow);
         Console.WriteLine(" - Added support for the '--updateinfo' command. ");
         Console.WriteLine(" - Added '-command' type commands. ");
         Console.WriteLine(" - The '-runfile' command's logic was rewritten and optimized. ");
@@ -726,7 +749,7 @@ class FileExplorerPro
         Console.WriteLine(" - Package 'ShellProgressBar' was installed. "); 
         Console.WriteLine(" - Package 'Colorful.Console' was installed. ");
         Console.WriteLine(" - Package 'System.Diagnostics.PerformanceCounter' was installed. ");
-        Colorize("\n   --- Version 2.0 - 09.03.2024 ---  \n", ConsoleColor.DarkYellow, "", ConsoleColor.DarkYellow);
+        Colorize("\n   --- Version 2.0 ---  ", ConsoleColor.DarkYellow, "09.03.2024 \n", ConsoleColor.DarkYellow);
 
         Console.WriteLine(" - Fixed several bugs. ");
         Console.WriteLine(" - Updated support for the '--info' command. ");
@@ -734,7 +757,7 @@ class FileExplorerPro
         Console.WriteLine(" - Added support for the '--license' command. ");
         Console.WriteLine(" - Some console colors were changed. ");
         Console.WriteLine(" - Added the 'README.md' file for license. ");
-        Colorize("\n   --- Version 1.0 - 07.03.2024 ---  \n", ConsoleColor.DarkYellow, "", ConsoleColor.DarkYellow);
+        Colorize("\n   --- Version 1.0 ---  ", ConsoleColor.DarkYellow, "07.03.2024 \n", ConsoleColor.DarkYellow);
 
         Console.WriteLine(" - Fixed several bugs. ");
         Console.WriteLine(" - Added support for the '--<command>' type commands. ");
@@ -743,8 +766,8 @@ class FileExplorerPro
 
         Console.ReadLine();
     }
-
-    static void ApplyColorTheme()
+  
+    static void ApplyColorTheme()    //TODO: Needs to be fixed in future.
     {
         switch (currentTheme)
         {
@@ -752,42 +775,34 @@ class FileExplorerPro
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.Gray;
                 break;
-
             case ColorTheme.Dark:
                 Console.BackgroundColor = ConsoleColor.DarkGray;
                 Console.ForegroundColor = ConsoleColor.White;
                 break;
-
             case ColorTheme.Light:
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.Black;
                 break;
-
             case ColorTheme.Blue:
                 Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 break;
-
             case ColorTheme.Green:
                 Console.BackgroundColor = ConsoleColor.DarkGreen;
                 Console.ForegroundColor = ConsoleColor.Green;
                 break;
-
             case ColorTheme.Red:
                 Console.BackgroundColor = ConsoleColor.DarkRed;
                 Console.ForegroundColor = ConsoleColor.Red;
                 break;
-
             case ColorTheme.Yellow:
                 Console.BackgroundColor = ConsoleColor.DarkYellow;
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 break;
-
             case ColorTheme.Cyan:
                 Console.BackgroundColor = ConsoleColor.DarkCyan;
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 break;
-
             default:
                 // Handle the case when an unsupported color is chosen
                 Console.BackgroundColor = ConsoleColor.Black;
@@ -1356,7 +1371,8 @@ class FileExplorerPro
             Console.ReadLine(); // Pause to let the user read the message
         }
     }
-    static void SetLanguage()
+
+    /* static void SetLanguage()   TODO: This is not working properly, please fix it in future (30.03.2024).
     {
         Console.WriteLine("Select Language:");
         Console.WriteLine("1. English");
@@ -1415,7 +1431,6 @@ class FileExplorerPro
                 currentCulture = CultureInfo.GetCultureInfo("hi-IN");
                 break;
             // Add more cases for additional languages
-
             default:
                 Console.WriteLine("Invalid choice. Using default language (English).");
                 return;
@@ -1428,6 +1443,7 @@ class FileExplorerPro
         Console.WriteLine("Press Enter to refresh the display.");
         Console.ReadLine();
     }
+    */
 
     static void ToggleFilter()
     {
@@ -1543,27 +1559,7 @@ class FileExplorerPro
         Console.ReadLine(); // Pause to let the user read the message
     }
 
-    static void UndoLastOperation()
-    {
-        if (lastOperationFiles.Count > 0)
-        {
-            Console.WriteLine("Undoing last operation...");
-
-            // Implement the logic to undo the last operation based on the stored information
-            // For simplicity, let's assume a message is displayed
-            Console.WriteLine($"Last operation on {string.Join(", ", lastOperationFiles)} undone.");
-
-            lastOperationFiles.Clear();
-        }
-        else
-        {
-            Console.WriteLine("No operation to undo.");
-        }
-
-        Console.ReadLine(); // Pause to let the user read the message
-    }
-
-    static void ShowDetailedHelp()
+    static void ShowDetailedHelp()  // Needs to be done properly. 
     {
         Console.WriteLine("\nFile Explorer Pro - Detailed Help\n");
         Console.WriteLine("1. Navigation:");
@@ -1577,7 +1573,7 @@ class FileExplorerPro
         // Include detailed help for other options...
 
         Console.ReadLine(); // Pause to let the user read the detailed help
-    }
+    }  
 
     static void EncryptDecryptFiles(string currentDirectory)
     {
@@ -1667,39 +1663,6 @@ class FileExplorerPro
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to decrypt the file: {ex.Message}");
-        }
-    }
-
-    static Stack<Action> undoStack = new Stack<Action>();
-    static Stack<Action> redoStack = new Stack<Action>();
-
-    static void Undo()
-    {
-        if (undoStack.Count > 0)
-        {
-            Action undoAction = undoStack.Pop();
-            undoAction.Invoke();
-            redoStack.Push(undoAction);
-            Console.WriteLine("Undo completed.");
-        }
-        else
-        {
-            Console.WriteLine("Nothing to undo.");
-        }
-    }
-
-    static void Redo()
-    {
-        if (redoStack.Count > 0)
-        {
-            Action redoAction = redoStack.Pop();
-            redoAction.Invoke();
-            undoStack.Push(redoAction);
-            Console.WriteLine("Redo completed.");
-        }
-        else
-        {
-            Console.WriteLine("Nothing to redo.");
         }
     }
 
@@ -1863,7 +1826,6 @@ class FileExplorerPro
         Console.WriteLine("\nPress any key to go back to the main menu.");
         Console.ReadKey();
     }
-
 
     static double BytesToMegabytes(float bytes)
     {
